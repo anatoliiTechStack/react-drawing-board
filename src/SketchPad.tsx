@@ -53,13 +53,14 @@ import EnableSketchPadContext from './contexts/EnableSketchPadContext';
 import './SketchPad.less';
 import ConfigContext from './ConfigContext';
 import { usePinch, useWheel } from 'react-use-gesture';
+import { IImageCoordinates } from './images/canvas_working_background/canvas_working_background.type'
 
 export interface SketchPadProps {
   currentTool: Tool;
   setCurrentTool: (tool: Tool) => void;
   currentToolOption: ToolOption;
   userId: string;
-
+  workingArea?: IImageCoordinates;
   // controlled mode.
   operations?: Operation[];
   onChange?: onChangeCallback;
@@ -460,8 +461,8 @@ const useResizeHandler = (
     };
   } else
     return {
-      onMouseMove: () => {},
-      onMouseUp: () => {},
+      onMouseMove: () => { },
+      onMouseUp: () => { },
       resizer: null,
     };
 };
@@ -481,6 +482,7 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
     onChange,
     viewMatrix,
     onViewMatrixChange,
+    workingArea
   } = props;
 
   const refCanvas = useRef<HTMLCanvasElement>(null);
@@ -1038,7 +1040,7 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
 
             setSelectedOperation({ ...selectedOperation, ...data });
           },
-          () => {},
+          () => { },
           prefixCls,
         );
         break;
@@ -1063,7 +1065,7 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
 
             setSelectedOperation({ ...selectedOperation, ...data });
           },
-          () => {},
+          () => { },
           prefixCls,
         );
         break;
@@ -1103,7 +1105,7 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
             // @ts-ignore
             setSelectedOperation({ ...selectedOperation, ...data });
           },
-          () => {},
+          () => { },
           intl,
           prefixCls,
         );
@@ -1163,6 +1165,37 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
       </div>
     );
   }
+
+  useEffect(() => {
+    if (workingArea) {
+      const context = refContext.current;
+      context.beginPath();
+      context.moveTo(workingArea[0].x, workingArea[0].y);
+
+      workingArea.forEach(({ x, y, radiusX, radiusY }, index) => {
+        const startPoint = index - 1 < 0 ? workingArea[0] : workingArea[index - 1];
+        const endPoint = { x, y }
+
+        if (radiusX && radiusY) {
+          const curve = {
+            x: (startPoint.x + endPoint.x) * radiusX!,
+            y: startPoint.y + radiusY!,
+          };
+
+          context.quadraticCurveTo(curve.x, curve.y, endPoint.x, endPoint.y);
+        }
+
+        else {
+          context.lineTo(endPoint.x, endPoint.y);
+        }
+      })
+
+      context.fillStyle = 'white';
+      context.fill();
+      context.stroke();
+      context.clip();
+    }
+  }, [workingArea])
 
   return (
     <div

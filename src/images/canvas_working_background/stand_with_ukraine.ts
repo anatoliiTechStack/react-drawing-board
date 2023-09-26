@@ -1,0 +1,37 @@
+export const standWithUkraine = [
+  /** @desc left wing  */
+  { x: 345, y: 797, radiusX: null, radiusY: null },
+  { x: 155, y: 797, radiusX: null, radiusY: null },
+  { x: 90, y: 700, radiusX: 0.40, radiusY: -15 },
+  { x: 90, y: 154, radiusX: null, radiusY: null },
+  { x: 268, y: 298, radiusX: null, radiusY: null },
+  { x: 300, y: 400, radiusX: 0.53, radiusY: 30 },
+  { x: 300, y: 570, radiusX: null, radiusY: null },
+  { x: 347, y: 606, radiusX: 0.47, radiusY: 40 },
+  /** @desc tail */
+  { x: 382, y: 268, radiusX: null, radiusY: null },
+  { x: 320, y: 132, radiusX: null, radiusY: null },
+  { x: 432, y: -10, radiusX: null, radiusY: null },
+  { x: 544, y: 132, radiusX: null, radiusY: null },
+  { x: 482, y: 268, radiusX: null, radiusY: null },
+  { x: 522, y: 606,  radiusX: null, radiusY: null },
+  /** @desc right wing */
+  { x: 561, y: 570, radiusX: 0.52, radiusY: -2 },
+  { x: 562, y: 400, radiusX: null, radiusY: null },
+  { x: 594, y: 298, radiusX: 0.485, radiusY: -75 },
+  { x: 771, y: 154, radiusX: null, radiusY: null },
+  { x: 771, y: 718, radiusX: null, radiusY: null },
+  { x: 700, y: 796, radiusX: 0.52, radiusY: 60 },
+  { x: 513, y: 797, radiusX: null, radiusY: null },
+  /** @desc head */
+  { x: 474, y: 860, radiusX: null, radiusY: null },
+  { x: 474, y: 938, radiusX: null, radiusY: null },
+  { x: 446, y: 960, radiusX: 0.51, radiusY: 20 },
+  { x: 447, y: 1022, radiusX: null, radiusY: null },
+  { x: 446, y: 1022, radiusX: null, radiusY: null },
+  { x: 410, y: 990, radiusX: 0.49, radiusY: 3.5 },
+  { x: 410, y: 960, radiusX: null, radiusY: null },
+  { x: 384, y: 938, radiusX: 0.5, radiusY: 4 },
+  { x: 384, y: 860, radiusX: 0.5, radiusY: 4 },
+  { x: 345, y: 797, radiusX: null, radiusY: null },
+];

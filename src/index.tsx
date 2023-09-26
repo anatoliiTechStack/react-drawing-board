@@ -17,6 +17,7 @@ import locales, { localeType } from './locales';
 import { extract_scale_from_matrix, isMobileDevice } from './utils';
 import './index.less';
 import ConfigContext, { DefaultConfig } from './ConfigContext';
+import { standWithUkraine } from './images/canvas_working_background/stand_with_ukraine';
 
 const { Header, Sider, Content } = Layout;
 
@@ -202,6 +203,7 @@ const Block: React.FC<BlockProps> = props => {
                     onViewMatrixChange={setViewMatrix}
                     operations={operations}
                     onChange={onChange}
+                    workingArea={standWithUkraine}
                   />,
                 )}
               </div>
