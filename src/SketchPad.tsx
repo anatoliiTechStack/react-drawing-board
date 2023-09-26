@@ -53,14 +53,14 @@ import EnableSketchPadContext from './contexts/EnableSketchPadContext';
 import './SketchPad.less';
 import ConfigContext from './ConfigContext';
 import { usePinch, useWheel } from 'react-use-gesture';
-import { standWithUkraine as imageCoordinates } from './images/canvas_working_background/stand_with_ukraine'
+import { IImageCoordinates } from './images/canvas_working_background/canvas_working_background.type'
 
 export interface SketchPadProps {
   currentTool: Tool;
   setCurrentTool: (tool: Tool) => void;
   currentToolOption: ToolOption;
   userId: string;
-
+  workingArea?: IImageCoordinates;
   // controlled mode.
   operations?: Operation[];
   onChange?: onChangeCallback;
@@ -482,6 +482,7 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
     onChange,
     viewMatrix,
     onViewMatrixChange,
+    workingArea
   } = props;
 
   const refCanvas = useRef<HTMLCanvasElement>(null);
@@ -1166,37 +1167,35 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
   }
 
   useEffect(() => {
-    const context = refContext.current;
+    if (workingArea) {
+      const context = refContext.current;
+      context.beginPath();
+      context.moveTo(workingArea[0].x, workingArea[0].y);
 
-    context.beginPath();
-    context.moveTo(imageCoordinates[0].x, imageCoordinates[0].y);
+      workingArea.forEach(({ x, y, radiusX, radiusY }, index) => {
+        const startPoint = index - 1 < 0 ? workingArea[0] : workingArea[index - 1];
+        const endPoint = { x, y }
 
+        if (radiusX && radiusY) {
+          const curve = {
+            x: (startPoint.x + endPoint.x) * radiusX!,
+            y: startPoint.y + radiusY!,
+          };
 
-    imageCoordinates.forEach(({ x, y, radiusX, radiusY }, index) => {
-      const startPoint = index - 1 < 0 ? imageCoordinates[0] : imageCoordinates[index - 1];
-      const endPoint = { x, y }
+          context.quadraticCurveTo(curve.x, curve.y, endPoint.x, endPoint.y);
+        }
 
-      if (radiusX && radiusY) {
-        const curve = {
-          x: (startPoint.x + endPoint.x) * radiusX!,
-          y: startPoint.y + radiusY!,
-        };
+        else {
+          context.lineTo(endPoint.x, endPoint.y);
+        }
+      })
 
-        context.quadraticCurveTo(curve.x, curve.y, endPoint.x, endPoint.y);
-      }
-
-      else {
-        context.lineTo(endPoint.x, endPoint.y);
-      }
-    })
-
-    context.fillStyle = 'white';
-    context.fill();
-    context.stroke();
-    context.clip();
-
-
-  }, [])
+      context.fillStyle = 'white';
+      context.fill();
+      context.stroke();
+      context.clip();
+    }
+  }, [workingArea])
 
   return (
     <div
