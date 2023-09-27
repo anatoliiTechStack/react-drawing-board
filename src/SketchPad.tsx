@@ -921,8 +921,10 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
 
     // high resolution canvas.
     const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * DPR;
-    canvas.height = rect.height * DPR;
+    canvas.width =
+      rect.width * DPR;
+    canvas.height =
+      rect.height * DPR;
 
     const context = canvas.getContext('2d');
     refContext.current = context
@@ -1217,46 +1219,48 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
   }
 
   return (
-    <div
-      className={`${sketchpadPrefixCls}-container`}
-      onMouseDown={onMouseDown}
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseUp}
-      onTouchStart={onTouchStart}
-      onTouchEnd={onTouchEnd}
-      onMouseUp={onMouseUp}
-      onClick={onClick}
-    >
-      <div id="test"></div>
-      <canvas
-        ref={refCanvas}
-        onDoubleClick={onDoubleClick}
-        className={`${sketchpadPrefixCls}-canvas`}
-        style={canvasStyle}
-        {...bindPinch()}
-        {...bindWheel()}
-      />
-
+    <div className={`${sketchpadPrefixCls}-backgroundDots`}>
       <div
-        ref={refInput}
-        contentEditable
-        style={{ fontSize: `${12 * scale}px` }}
-        className={`${sketchpadPrefixCls}-textInput`}
-        onBlur={() => {
-          onTextComplete(
-            refInput,
-            refCanvas,
-            viewMatrix,
-            scale,
-            handleCompleteOperation,
-            setCurrentTool,
-          );
-        }}
-      ></div>
+        className={`${sketchpadPrefixCls}-container`}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseUp}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+        onMouseUp={onMouseUp}
+        onClick={onClick}
+      >
+        <canvas
+          ref={refCanvas}
+          onDoubleClick={onDoubleClick}
+          className={`${sketchpadPrefixCls}-canvas`}
+          style={canvasStyle}
+          {...bindPinch()}
+          {...bindWheel()}
+        />
 
-      {settingMenu}
-      {removeButton}
-      {resizer}
+
+        <div
+          ref={refInput}
+          contentEditable
+          style={{ fontSize: `${12 * scale}px` }}
+          className={`${sketchpadPrefixCls}-textInput`}
+          onBlur={() => {
+            onTextComplete(
+              refInput,
+              refCanvas,
+              viewMatrix,
+              scale,
+              handleCompleteOperation,
+              setCurrentTool,
+            );
+          }}
+        ></div>
+
+        {settingMenu}
+        {removeButton}
+        {resizer}
+      </div>
     </div>
   );
 };
