@@ -923,14 +923,48 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
     const rect = canvas.getBoundingClientRect();
     canvas.width = rect.width * DPR;
     canvas.height = rect.height * DPR;
-    refContext.current = canvas.getContext('2d');
+
+    const context = canvas.getContext('2d');
+    refContext.current = context
+
+    if (workingArea) {
+      /** @TODO set scale according to device */
+      context.scale(1.7, 1.7)
+
+      context.beginPath();
+      context.moveTo(workingArea[0].x, workingArea[0].y);
+
+      workingArea.forEach(({ x, y, radiusX, radiusY }, index) => {
+
+        const startPoint = index - 1 < 0 ? workingArea[0] : workingArea[index - 1];
+        const endPoint = { x, y }
+
+        if (radiusX && radiusY) {
+          const curve = {
+            x: (startPoint.x + endPoint.x) * radiusX!,
+            y: startPoint.y + radiusY!,
+          };
+
+          context.quadraticCurveTo(curve.x, curve.y, endPoint.x, endPoint.y);
+        }
+
+        else {
+          context.lineTo(endPoint.x, endPoint.y);
+        }
+      })
+
+      context.fillStyle = 'white';
+      context.fill();
+      context.stroke();
+      context.clip();
+    }
 
     canvas.oncontextmenu = (e) => {
       e.preventDefault();
     };
   }, []);
 
-  const canvasStyle: CSSProperties = {};
+  const canvasStyle: CSSProperties = { transform: 'translate(29%, 4%)' };
   if (currentTool === Tool.Stroke) {
     canvasStyle.cursor = `url(${sketchStrokeCursor}) 0 14, crosshair`;
   } else if (currentTool === Tool.Shape) {
@@ -1181,37 +1215,6 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
       </div>
     );
   }
-
-  useEffect(() => {
-    if (workingArea) {
-      const context = refContext.current;
-      context.beginPath();
-      context.moveTo(workingArea[0].x, workingArea[0].y);
-
-      workingArea.forEach(({ x, y, radiusX, radiusY }, index) => {
-        const startPoint = index - 1 < 0 ? workingArea[0] : workingArea[index - 1];
-        const endPoint = { x, y }
-
-        if (radiusX && radiusY) {
-          const curve = {
-            x: (startPoint.x + endPoint.x) * radiusX!,
-            y: startPoint.y + radiusY!,
-          };
-
-          context.quadraticCurveTo(curve.x, curve.y, endPoint.x, endPoint.y);
-        }
-
-        else {
-          context.lineTo(endPoint.x, endPoint.y);
-        }
-      })
-
-      context.fillStyle = 'white';
-      context.fill();
-      context.stroke();
-      context.clip();
-    }
-  }, [workingArea])
 
   return (
     <div

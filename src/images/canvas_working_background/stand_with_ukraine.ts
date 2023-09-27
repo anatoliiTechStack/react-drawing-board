@@ -11,7 +11,7 @@ export const standWithUkraine = [
   /** @desc tail */
   { x: 382, y: 268, radiusX: null, radiusY: null },
   { x: 320, y: 132, radiusX: null, radiusY: null },
-  { x: 432, y: -10, radiusX: null, radiusY: null },
+  { x: 432, y: 0, radiusX: null, radiusY: null },
   { x: 544, y: 132, radiusX: null, radiusY: null },
   { x: 482, y: 268, radiusX: null, radiusY: null },
   { x: 522, y: 606,  radiusX: null, radiusY: null },
