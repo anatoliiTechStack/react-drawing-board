@@ -54,6 +54,7 @@ import './SketchPad.less';
 import ConfigContext from './ConfigContext';
 import { usePinch, useWheel } from 'react-use-gesture';
 import { IImageCoordinates } from './images/canvas_working_background/canvas_working_background.type'
+import { onFillShape } from './FillTool';
 
 export interface SketchPadProps {
   currentTool: Tool;
@@ -730,6 +731,21 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
     }
   };
 
+  const onClick = (e: { clientX: number; clientY: number }) => {
+    if (!refCanvas.current) return null;
+    if (!enableSketchPadContext.enable) return null;
+
+    const [x, y] = mapClientToCanvas(e, refCanvas.current, viewMatrix);
+
+    switch (currentTool) {
+      case Tool.Fill:
+        onFillShape(e.clientX, e.clientY, refCanvas.current);
+        break;
+      default:
+        break;
+    }
+  };
+
   const onTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     if (e.touches.length === 1) {
       if (e.timeStamp - lastTapRef.current < 300) {
@@ -1206,6 +1222,7 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
       onMouseUp={onMouseUp}
+      onClick={onClick}
     >
       <div id="test"></div>
       <canvas

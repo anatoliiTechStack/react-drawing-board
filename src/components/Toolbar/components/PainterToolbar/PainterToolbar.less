@@ -1,19 +1,8 @@
-@import './theme';
+@import '../../../../theme.less';
 
 @toolbar-prefix: ~'@{prefix}-toolbar';
 
 .ant-layout-sider-children {
-  .@{toolbar-prefix}-container {
-    width: 55px;
-    height: 100%;
-    flex-direction: column;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    padding-right: 0;
-    padding-left: 0;
-    border-radius: 0px 0px 0px 0px;
-    overflow: auto;
-  }
 
   .@{toolbar-prefix}-icon {
     width: 100%;
@@ -24,11 +13,10 @@
   }
 
   .@{toolbar-prefix}-mobile-icon {
-    height: 40px;
-    width: 45px;
-    box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.16);
-    border-radius: 0 12px 12px 0;
+    height: 48px;
+    width: 48px;
     position: relative;
+    padding: 8px;
 
     &:hover {
       background-color: white;
@@ -50,14 +38,19 @@
 
 .@{toolbar-prefix}-container {
   display: flex;
-  height: 55px;
-  background: rgba(255, 255, 255, 1);
-  box-shadow: -3px 0px 13px 0px rgba(0, 0, 0, 0.08);
-  border-radius: 3px 3px 0px 0px;
-  padding-left: 20px;
-  padding-right: 150px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 64px;
   position: relative;
-  z-index: 1;
+  border-radius: 120px;
+  background:#1F1F1F;
+  padding: 4px 0;
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  transform: translate(0, -50%);
+  z-index: 999;
 }
 
 .@{toolbar-prefix}-icon {
@@ -65,20 +58,22 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 50px;
-  height: 100%;
+  width: 48px;
+  height: 48px;
   cursor: pointer;
-  margin: 0 7px;
-
-  svg {
-    width: 20px;
-    height: 20px;
-    margin-bottom: 2px;
-    fill: #1890ff;
+  margin: 4px;
+  border-radius: 100%;
+  svg{
+    height: 24px;
+    width: 24px;
+    fill: #E0E0E0;
   }
 
   &:hover {
     background: rgba(238, 238, 238, 1);
+  }
+  &:hover svg{
+    fill: #1F1F1F;
   }
 }
 
@@ -92,4 +87,7 @@
 
 .@{toolbar-prefix}-activeIcon {
   background: rgba(238, 238, 238, 1);
+  svg{
+    fill: #1F1F1F;
+  }
 }
