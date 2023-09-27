@@ -9,6 +9,7 @@ export default {
   'umi.block.sketch.clear': '清空',
   'umi.block.sketch.eraser': '橡皮擦',
   'umi.block.sketch.save': '保存',
+  'umi.block.sketch.back': 'Back',
 
   'umi.block.sketch.text.placeholder': '输入文本',
   'umi.block.sketch.text.size.small': '小',

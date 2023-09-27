@@ -9,6 +9,7 @@ export default {
   'umi.block.sketch.clear': 'Curăță',
   'umi.block.sketch.eraser': 'Șterge',
   'umi.block.sketch.save': 'Salvează',
+  'umi.block.sketch.back': 'Back',
 
   'umi.block.sketch.text.placeholder': 'Scrie ceva',
   'umi.block.sketch.text.size.small': 'Mic',

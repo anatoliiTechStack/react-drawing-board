@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 import { animated } from 'react-spring';
 import { IntlProvider } from 'react-intl';
 import { Layout } from 'antd';
-import Toolbar from './Toolbar';
+import Toolbar from './components/Toolbar/Toolbar';
 import SketchPad, {
   SketchPadRef,
   Operation,
@@ -18,7 +18,7 @@ import { extract_scale_from_matrix, isMobileDevice } from './utils';
 import './index.less';
 import ConfigContext, { DefaultConfig } from './ConfigContext';
 
-const { Header, Sider, Content } = Layout;
+const {  Content } = Layout;
 
 interface BlockProps {
   userId?: string;
@@ -43,7 +43,7 @@ const AnimatedSketchPad = animated(SketchPad);
 const defaultProps: Partial<BlockProps> = {
   userId: v4(),
   locale: navigator.language as localeType,
-  toolbarPlacement: 'top',
+  toolbarPlacement: 'left',
 };
 
 const enableSketchPadReducer = (state: boolean, action: boolean) => {
@@ -108,37 +108,6 @@ const Block: React.FC<BlockProps> = props => {
     return () => removeEventListener('keydown', keydownHandler);
   }, []);
 
-  const renderWithLayout = (toolbar: React.ReactElement, sketchPad: React.ReactElement) => {
-    if (toolbarPlacement === 'left' || isMobileDevice) {
-      return (
-        <Layout style={{ flexDirection: 'row' }}>
-          <Sider width={isMobileDevice ? 40 : 55} theme="light">
-            {toolbar}
-          </Sider>
-          <Content>{sketchPad}</Content>
-        </Layout>
-      );
-    } else if (toolbarPlacement === 'top') {
-      return (
-        <Layout hasSider={false}>
-          <Header>{toolbar}</Header>
-          <Content>{sketchPad}</Content>
-        </Layout>
-      );
-    } else if (toolbarPlacement === 'right') {
-      return (
-        <Layout style={{ flexDirection: 'row' }}>
-          <Content>{sketchPad}</Content>
-          <Sider width={55} theme="light">
-            {toolbar}
-          </Sider>
-        </Layout>
-      );
-    } else {
-      return null;
-    }
-  };
-
   const enableSketchPadContextValue = useMemo(() => {
     return {
       enable: enableSketchPad[0],
@@ -158,7 +127,7 @@ const Block: React.FC<BlockProps> = props => {
                 className={`${config.prefixCls}-container ${clsssName || ''}`}
                 style={{ width: '100vw', height: '100vh', ...(props.style || {}) }}
               >
-                {renderWithLayout(
+                <Layout style={{ flexDirection: 'row' }}>
                   <Toolbar
                     toolbarPlacement={toolbarPlacement}
                     currentTool={currentTool}
@@ -171,16 +140,6 @@ const Block: React.FC<BlockProps> = props => {
                         refSketch.current.selectImage(image);
                       }
                     }}
-                    undo={() => {
-                      if (refSketch.current) {
-                        refSketch.current.undo();
-                      }
-                    }}
-                    redo={() => {
-                      if (refSketch.current) {
-                        refSketch.current.redo();
-                      }
-                    }}
                     clear={() => {
                       if (refSketch.current) {
                         refSketch.current.clear();
@@ -191,19 +150,31 @@ const Block: React.FC<BlockProps> = props => {
                         refSketch.current.save(onSave);
                       }
                     }}
-                  />,
-                  <AnimatedSketchPad
-                    ref={refSketch}
-                    userId={userId}
-                    currentTool={currentTool}
-                    setCurrentTool={setCurrentTool}
-                    currentToolOption={currentToolOption}
-                    viewMatrix={viewMatrix}
-                    onViewMatrixChange={setViewMatrix}
-                    operations={operations}
-                    onChange={onChange}
-                  />,
-                )}
+                    undo={() => {
+                      if (refSketch.current) {
+                        refSketch.current.undo();
+                      }
+                    }}
+                    redo={() => {
+                      if (refSketch.current) {
+                        refSketch.current.redo();
+                      }
+                    }}
+                  />
+                  <Content>
+                    <AnimatedSketchPad
+                      ref={refSketch}
+                      userId={userId}
+                      currentTool={currentTool}
+                      setCurrentTool={setCurrentTool}
+                      currentToolOption={currentToolOption}
+                      viewMatrix={viewMatrix}
+                      onViewMatrixChange={setViewMatrix}
+                      operations={operations}
+                      onChange={onChange}
+                    />
+                  </Content>
+                </Layout>
               </div>
             )}
           </ConfigContext.Consumer>

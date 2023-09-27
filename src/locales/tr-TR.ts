@@ -9,6 +9,7 @@ export default {
   'umi.block.sketch.clear': 'Temizle',
   'umi.block.sketch.eraser': 'Silgi',
   'umi.block.sketch.save': 'Kaydet',
+  'umi.block.sketch.back': 'Back',
 
   'umi.block.sketch.text.placeholder': 'Birşeyler yaz',
   'umi.block.sketch.text.size.small': 'Ufak',

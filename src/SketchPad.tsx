@@ -53,6 +53,7 @@ import EnableSketchPadContext from './contexts/EnableSketchPadContext';
 import './SketchPad.less';
 import ConfigContext from './ConfigContext';
 import { usePinch, useWheel } from 'react-use-gesture';
+import { onFillShape } from './FillTool';
 
 export interface SketchPadProps {
   currentTool: Tool;
@@ -460,8 +461,8 @@ const useResizeHandler = (
     };
   } else
     return {
-      onMouseMove: () => {},
-      onMouseUp: () => {},
+      onMouseMove: () => { },
+      onMouseUp: () => { },
       resizer: null,
     };
 };
@@ -722,6 +723,21 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
         break;
       case Tool.Text:
         onTextMouseDown(e, currentToolOption, scale, refInput, refCanvas, intl);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const onClick = (e: { clientX: number; clientY: number }) =>{
+    if (!refCanvas.current) return null;
+    if (!enableSketchPadContext.enable) return null;
+
+    const [x, y] = mapClientToCanvas(e, refCanvas.current, viewMatrix);
+
+    switch (currentTool) {
+      case Tool.Fill:
+        onFillShape(e.clientX, e.clientY, refCanvas.current);
         break;
       default:
         break;
@@ -1038,7 +1054,7 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
 
             setSelectedOperation({ ...selectedOperation, ...data });
           },
-          () => {},
+          () => { },
           prefixCls,
         );
         break;
@@ -1063,7 +1079,7 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
 
             setSelectedOperation({ ...selectedOperation, ...data });
           },
-          () => {},
+          () => { },
           prefixCls,
         );
         break;
@@ -1103,7 +1119,7 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
             // @ts-ignore
             setSelectedOperation({ ...selectedOperation, ...data });
           },
-          () => {},
+          () => { },
           intl,
           prefixCls,
         );
@@ -1173,6 +1189,7 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
       onMouseUp={onMouseUp}
+      onClick={onClick}
     >
       <div id="test"></div>
       <canvas

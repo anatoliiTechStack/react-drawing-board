@@ -1,26 +1,25 @@
 import React, { useRef, ChangeEventHandler, useContext } from 'react';
-import { useSpring, animated } from 'react-spring';
-import { useIntl } from 'react-intl';
-import Tool, { ToolOption } from './enums/Tool';
-import SelectIcon from './svgs/SelectIcon';
-import StrokeIcon from './svgs/StrokeIcon';
-import ShapeIcon from './svgs/ShapeIcon';
-import TextIcon from './svgs/TextIcon';
-import ImageIcon from './svgs/ImageIcon';
-import UndoIcon from './svgs/UndoIcon';
-import RedoIcon from './svgs/RedoIcon';
-import ClearIcon from './svgs/ClearIcon';
-import ZoomIcon from './svgs/ZoomIcon';
-import SaveIcon from './svgs/SaveIcon';
-import EraserIcon from './svgs/EraserIcon';
-import { useStrokeDropdown } from './StrokeTool';
-import { useShapeDropdown } from './ShapeTool';
+import { animated } from 'react-spring';
+import Tool, { ToolOption } from '../../../../enums/Tool';
+import SelectIcon from '../../../../svgs/SelectIcon';
+import StrokeIcon from '../../../../svgs/StrokeIcon';
+import ShapeIcon from '../../../../svgs/ShapeIcon';
+import TextIcon from '../../../../svgs/TextIcon';
+import ImageIcon from '../../../../svgs/ImageIcon';
+import ClearIcon from '../../../../svgs/ClearIcon';
+import ZoomIcon from '../../../../svgs/ZoomIcon';
+import SaveIcon from '../../../../svgs/SaveIcon';
+import FillIcon from '../../../../svgs/FillIcon';
+
+import EraserIcon from '../../../../svgs/EraserIcon';
+import { useStrokeDropdown } from '../../../../StrokeTool';
+import { useShapeDropdown } from '../../../../ShapeTool';
 import { Dropdown } from 'antd';
 import classNames from 'classnames';
-import './Toolbar.less';
-import { isMobileDevice } from './utils';
-import ConfigContext from './ConfigContext';
-import EnableSketchPadContext from './contexts/EnableSketchPadContext';
+import './PainterToolbar.less';
+import { isMobileDevice } from '../../../../utils';
+import ConfigContext from '../../../../ConfigContext';
+import EnableSketchPadContext from '../../../../contexts/EnableSketchPadContext';
 
 const tools = [
   {
@@ -51,19 +50,6 @@ const tools = [
     type: Tool.Image,
   },
   {
-    label: 'umi.block.sketch.undo',
-    icon: UndoIcon,
-    type: Tool.Undo,
-    style: {
-      marginLeft: 'auto',
-    },
-  },
-  {
-    label: 'umi.block.sketch.redo',
-    icon: RedoIcon,
-    type: Tool.Redo,
-  },
-  {
     label: 'umi.block.sketch.eraser',
     icon: EraserIcon,
     type: Tool.Eraser,
@@ -72,60 +58,59 @@ const tools = [
     label: 'umi.block.sketch.clear',
     icon: ClearIcon,
     type: Tool.Clear,
-    style: {
-      marginRight: 'auto',
-    },
+  },
+  {
+    label: 'umi.block.sketch.clear',
+    icon: FillIcon,
+    type: Tool.Fill,
   },
   ...(!isMobileDevice
     ? [
-        {
-          label: '100%',
-          labelThunk: (props: ToolbarProps) => `${~~(props.scale * 100)}%`,
-          icon: ZoomIcon,
-          type: Tool.Zoom,
-        },
-      ]
+      {
+        label: '100%',
+        labelThunk: (props: PainterToolbarProps) => `${~~(props.scale * 100)}%`,
+        icon: ZoomIcon,
+        type: Tool.Zoom,
+      },
+    ]
     : []),
   ...(!isMobileDevice
     ? [
-        {
-          label: 'umi.block.sketch.save',
-          icon: SaveIcon,
-          type: Tool.Save,
-        },
-      ]
+      {
+        label: 'umi.block.sketch.save',
+        icon: SaveIcon,
+        type: Tool.Save,
+      },
+    ]
     : []),
 ];
 
-export interface ToolbarProps {
+export interface PainterToolbarProps {
   currentTool: Tool;
   setCurrentTool: (tool: Tool) => void;
   currentToolOption: ToolOption;
   setCurrentToolOption: (option: ToolOption) => void;
   selectImage: (image: string) => void;
-  undo: () => void;
-  redo: () => void;
   clear: () => void;
   save: () => void;
   scale: number;
   toolbarPlacement: string;
+  
 }
 
-const Toolbar: React.FC<ToolbarProps> = (props) => {
+const PainterToolbar: React.FC<PainterToolbarProps> = (props) => {
   const {
     currentTool,
     setCurrentTool,
     currentToolOption,
     setCurrentToolOption,
     selectImage,
-    undo,
-    redo,
     clear,
     save,
     toolbarPlacement,
+    
   } = props;
   const refFileInput = useRef<HTMLInputElement>(null);
-  const { formatMessage } = useIntl();
   const { prefixCls } = useContext(ConfigContext);
   const enableSketchPadContext = useContext(EnableSketchPadContext);
 
@@ -152,23 +137,6 @@ const Toolbar: React.FC<ToolbarProps> = (props) => {
       })}
     >
       {tools.map((tool) => {
-        let borderTopStyle = 'none';
-        if (isMobileDevice) {
-          if (tool.type === Tool.Stroke && currentToolOption.strokeColor) {
-            borderTopStyle = `3px solid ${currentToolOption.strokeColor}`;
-          }
-
-          if (tool.type === Tool.Shape && currentToolOption.shapeBorderColor) {
-            borderTopStyle = `3px solid ${currentToolOption.shapeBorderColor}`;
-          }
-        }
-
-        const iconAnimateProps = useSpring({
-          left: isMobileDevice && currentTool !== tool.type ? -12 : 0,
-          borderTop: borderTopStyle,
-          ...(tool.style || {}),
-        });
-
         const menu = (
           <animated.div
             className={classNames({
@@ -176,14 +144,9 @@ const Toolbar: React.FC<ToolbarProps> = (props) => {
               [`${toolbarPrefixCls}-activeIcon`]: currentTool === tool.type && !isMobileDevice,
               [`${toolbarPrefixCls}-mobile-icon`]: isMobileDevice,
             })}
-            style={iconAnimateProps}
             onClick={() => {
               if (tool.type === Tool.Image && refFileInput.current) {
                 refFileInput.current.click();
-              } else if (tool.type === Tool.Undo) {
-                undo();
-              } else if (tool.type === Tool.Redo) {
-                redo();
               } else if (tool.type === Tool.Clear) {
                 clear();
               } else if (tool.type === Tool.Zoom) {
@@ -196,11 +159,6 @@ const Toolbar: React.FC<ToolbarProps> = (props) => {
             key={tool.label}
           >
             <tool.icon />
-            {!isMobileDevice ? (
-              <label className={`${toolbarPrefixCls}-iconLabel`}>
-                {tool.labelThunk ? tool.labelThunk(props) : formatMessage({ id: tool.label })}
-              </label>
-            ) : null}
           </animated.div>
         );
 
@@ -245,4 +203,4 @@ const Toolbar: React.FC<ToolbarProps> = (props) => {
   );
 };
 
-export default Toolbar;
+export default PainterToolbar;
