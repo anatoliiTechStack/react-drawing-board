@@ -548,18 +548,20 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
     // clear canvas
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-
+    
     saveGlobalTransform();
+    drawBird();
     operations.forEach((operation) => {
       const hover =
         (!selectedOperation || selectedOperation.id !== operation.id) &&
         operation.id === hoverOperationId;
-
+      
       switch (operation.tool) {
         case Tool.Clear:
           restoreGlobalTransform();
           context.clearRect(0, 0, context.canvas.width, context.canvas.height);
           saveGlobalTransform();
+          drawBird()
           break;
         case Tool.Eraser:
         case Tool.Stroke:
@@ -736,7 +738,6 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
     if (!enableSketchPadContext.enable) return null;
 
     const [x, y] = mapClientToCanvas(e, refCanvas.current, viewMatrix);
-
     switch (currentTool) {
       case Tool.Fill:
         onFillShape(e.clientX, e.clientY, refCanvas.current);
@@ -915,25 +916,42 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
       handleCompleteOperation(Tool.Remove, { operationId: selectedOperation.id });
     }
   };
-
-  useEffect(() => {
+  const  setTransform = () => {
     const canvas = refCanvas.current as HTMLCanvasElement;
-
-    // high resolution canvas.
     const rect = canvas.getBoundingClientRect();
-    canvas.width =
-      rect.width * DPR;
-    canvas.height =
-      rect.height * DPR;
+    canvas.width = rect.width * DPR;
+    canvas.height = rect.height * DPR;
+    refContext.current = canvas.getContext('2d');
+    
+    canvas.oncontextmenu = (e) => {
+      e.preventDefault();
+    };
+    
+    saveGlobalTransform();
+    const [a, b, c, d, e, f] = viewMatrix;
+    const SCALE = 0.7
 
+    onViewMatrixChange([
+      SCALE,
+      b,
+      c,
+      SCALE,
+      e - rect.x * (SCALE - 1) + (rect.width / 2 - 300), // set bird in center
+      f - rect.x * (SCALE - 1) + (rect.height / 2 - 400), // set bird in center
+    ]);
+  }
+  const drawBird = (isRestore?) => {
+    const canvas = refCanvas.current as HTMLCanvasElement;
+    
     const context = canvas.getContext('2d');
     refContext.current = context
-
+    
     if (workingArea) {
-      /** @TODO set scale according to device */
-      context.scale(1.7, 1.7)
-
+      context.lineJoin = 'round';
+      context.lineCap = 'round';
       context.beginPath();
+      context.lineWidth = 2;
+      context.globalCompositeOperation = 'source-over';
       context.moveTo(workingArea[0].x, workingArea[0].y);
 
       workingArea.forEach(({ x, y, radiusX, radiusY }, index) => {
@@ -954,19 +972,22 @@ const SketchPad: React.ForwardRefRenderFunction<any, SketchPadProps> = (props, r
           context.lineTo(endPoint.x, endPoint.y);
         }
       })
-
+      
       context.fillStyle = 'white';
       context.fill();
+      
       context.stroke();
+      
+      context.closePath();
       context.clip();
     }
-
-    canvas.oncontextmenu = (e) => {
-      e.preventDefault();
-    };
+  }
+  useEffect(() => {
+    setTransform()
   }, []);
 
-  const canvasStyle: CSSProperties = { transform: 'translate(29%, 4%)' };
+
+  const canvasStyle: CSSProperties = {};
   if (currentTool === Tool.Stroke) {
     canvasStyle.cursor = `url(${sketchStrokeCursor}) 0 14, crosshair`;
   } else if (currentTool === Tool.Shape) {

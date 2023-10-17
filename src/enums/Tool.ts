@@ -19,11 +19,11 @@ enum Tool {
 export enum ShapeType {
   Rectangle = 'Rectangle',
   Oval = 'Oval',
-} 
+}
 
-export const MAX_SCALE = 2;
+export const MAX_SCALE = 1.4;
 
-export const MIN_SCALE = 0.1;
+export const MIN_SCALE = 0.5;
 
 export interface Position {
   x: number;
@@ -53,7 +53,7 @@ export const defaultToolOption = {
   defaultText: {
     id: 'umi.block.sketch.text.placeholder'
   },
-} 
+}
 
 export type ToolOption = {
   strokeSize: number,

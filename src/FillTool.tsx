@@ -44,8 +44,13 @@ function actionFill(startX, startY, currentColor) {
   let pixelStack = [[startX, startY]];
   let newPos, x, y, pixelPos, reachLeft, reachRight;
   floodFill();
+  let maxDOTS = 2000;
   function floodFill() {
     newPos = pixelStack.pop();
+    maxDOTS -= 1;
+    if (maxDOTS < 0) {
+      return;
+    }
     x = newPos[0];
     y = newPos[1];
 

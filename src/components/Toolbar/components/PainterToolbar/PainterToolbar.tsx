@@ -60,7 +60,7 @@ const tools = [
     type: Tool.Clear,
   },
   {
-    label: 'umi.block.sketch.clear',
+    label: 'umi.block.sketch.fill',
     icon: FillIcon,
     type: Tool.Fill,
   },
